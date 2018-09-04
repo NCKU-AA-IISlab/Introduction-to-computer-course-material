@@ -109,7 +109,7 @@ def createHTML():
 		f.write('<p>Until %s</p>'%(datetime.datetime.now().strftime(format)))
 		f.write('<table id="statistics" border="1" class="sortable">')
 		f.write('<tr><th>Authors</th><th>Commits</th><th>Line Inserted</th><th>Line Deleted</th><th>Word Inserted</th><th>Word Deleted</th><th>GIT Score</th></tr>')
-		for i in range(0,num_authors):
+		for i in range(1,num_authors):
 			f.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d</td></tr>'% (authors[i],num_commits[i],lines_inserted[i],lines_deleted[i],words_inserted[i],words_deleted[i],gitScore[i]))
 		f.write('</table>')
 		f.write('<p>Total authors: %d </p>' % num_authors)
@@ -118,9 +118,11 @@ def createHTML():
 		f.write("2. If you can't find your name in the table, it means you haven't done any commit<br/>")
 		f.write('<h1>Total Score</h1>')
 		f.write('<table id="total" border="1" class="sortable">')
+		'''
 		f.write('<tr><th>Participants</th><th>Attendace at lecture</th><th>Attendance at daily scrum</th><th>GIT Score</th><th>Oral presentation</th><th>Quiz</th><th>Report</th><th><button onclick="calculate()">TOTAL</button></th></tr>')
-		for i in range(len(participants)):
+		for i in range(1,len(participants)):
 			f.write('<tr><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td><input value="85"></td><td>%d</td></tr>'% (participants[i],attendance_lecture[i],daily_scrum_grade[i],gitScore_transfer[i],presentation_grade[i],quiz_grade[i],temptotal_grade[i]))
+		'''		
 		f.write('</table>')
 		f.write('<script src="score.js"></script>')
 		f.write('<script src="sorttable.js"></script>')
@@ -135,7 +137,7 @@ def statistics():
 		return False
 	getnewest()
 	get_author()
-        print authors
+
 	get_line_data()
 	get_word_data()
 	#remove_fake_stats()
