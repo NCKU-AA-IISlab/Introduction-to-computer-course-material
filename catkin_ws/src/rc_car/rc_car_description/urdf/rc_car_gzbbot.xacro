@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<robot name="gzbbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:property name="PI" value="3.1415926535897931"/>
+	<xacro:property name="veh" value="gzbbot"/>
+	<xacro:property name="chassisHeight" value="0.0365"/>
+	<xacro:property name="chassisLength" value="0.17"/>
+	<xacro:property name="chassisWidth" value="0.075"/>
+	<xacro:property name="chassisMass" value="0.38"/><!--unit:kg-->
+
+	<xacro:property name="casterRadius" value="0.027"/>
+	<xacro:property name="casterMass" value="0.001"/>
+
+	<xacro:property name="wheelWidth" value="0.026"/>
+	<xacro:property name="wheelRadius" value="0.035"/>
+	<xacro:property name="wheelPos" value="0.06"/>  <!--distance between head-->
+	<xacro:property name="wheelMass" value="0.06"/>
+
+	<xacro:property name="cameraSize" value="0.023"/>
+	<xacro:property name="cameraMass" value="0.03"/>
+	<xacro:include filename="$(find rc_car_description)/urdf/rc_car.gazebo" />
+	<xacro:include filename="$(find rc_car_description)/urdf/materials.xacro" />
+	<xacro:include filename="$(find rc_car_description)/urdf/macros.xacro" />
+
+<link name='chassis'>
+  <collision> 
+    <origin xyz="0 0 0.054" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+    </geometry> 
+  </collision>
+  <visual> 
+    <origin xyz="0 0 0.03" rpy="0 0 3.14"/> 
+    <geometry>
+      <mesh filename="package://rc_car_description/meshes/duckiebot.dae"/>
+      
+      <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+    </geometry> 
+  </visual>
+  <inertial> 
+    <origin xyz="0 0 0.054" rpy="0 0 0"/> 
+    <mass value="${chassisMass}"/> 
+    <box_inertia m="${chassisMass}" x="${chassisLength}" y="${chassisWidth}" z="${chassisHeight}"/>
+  </inertial>
+</link>
+
+<link name="base_footprint" />
+
+<joint name="base_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+</joint>
+
+<link name="base_link" />
+
+<joint name="base_link_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="chassis"/>
+</joint>
+
+
+
+
+<joint name="caster_wheel_back" type="fixed">
+  <parent link="chassis"/>
+  <child link="caster_wheel_back"/>
+</joint>
+
+<link name="caster_wheel_back">
+  <collision>
+    <origin xyz="-0.05 0 ${casterRadius}" rpy="0 0 0"/>
+    <geometry>
+      <sphere radius="${casterRadius}"/>
+    </geometry>
+  </collision>
+  
+  <visual>
+    <origin xyz="-0.05 0 0.014" rpy="0 0 0"/>
+    <geometry>
+      <sphere radius=".014"/>
+    </geometry>
+    <material name="red"/>
+  </visual>
+
+  <inertial>
+    <origin xyz="-0.05 0 ${casterRadius}" rpy="0 0 0"/>
+    <mass value="${casterMass}"/>
+    <sphere_inertia m="${casterMass}" r="${casterRadius}"/>
+  </inertial>
+</link>
+
+<wheel lr="left" tY="-1"/>
+<wheel lr="right" tY="1"/>
+
+<!-- Camera joint -->
+  <joint name="camera_joint" type="fixed">
+    <origin xyz="0.08 0 0.12475" rpy="0 0.349 0"/>
+    <parent link="chassis"/>
+    <child link="camera_link"/>
+  </joint>
+
+  <!-- Camera -->
+ <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>     ------0.08 0 0.12475
+      <geometry>
+	<box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="-0.03 0 0" rpy="0 0 0"/>   
+      <geometry>     
+        <mesh scale ="0.1 0.1 0.1" filename="package://rc_car_description/meshes/duckiebotcam.dae"/>
+	<!--box size="${cameraSize} ${cameraSize} ${cameraSize}"/-->
+      </geometry>
+  
+    </visual>
+
+  <inertial> 
+    <origin xyz="0. 0 0" rpy="0 0 0"/> 
+    <mass value="${cameraMass}"/> 
+    <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}"/>
+  </inertial>
+  </link>
+
+
+
+  <!-- Hokuyo joint -->
+ <!-- <joint name="hokuyo_joint" type="fixed">
+    <origin xyz="${chassisLength/2-cameraSize/2} 0 ${chassisHeight+casterRadius+cameraSize/2}" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <axis xyz="0 1 0" />
+    <child link="hokuyo_link"/>
+  </joint>
+-->
+  <!-- Hokuyo Laser -->
+  <!--<link name="hokuyo_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rc_car_description/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+-->
+
+</robot>

@@ -1,0 +1,17 @@
+<launch>
+
+    <!--<arg name="veh" doc="Name of vehicle. ex: megaman"/>-->
+    <arg name="map_name" default="lab5916_map" doc="The name of the xacro file with the duckietown map "/>
+ <include file="$(find gazebo_ros)/launch/empty_world.launch"> 
+    <arg name="world_name" value="$(find rc_car_gazebo)/world/map1102.world"/>
+</include>
+<!-- The duckietown map state publisher-->
+   <!-- <param name="map_description" command="$(find xacro)/xacro '$(find rc_car_description)/urdf/$(arg map_name).urdf.xacro'" />
+<node  name="spawn_town" pkg="gazebo_ros" type="spawn_model" 
+	args="-param map_description -urdf -model town"  respawn="false" output="screen"/>
+    <node name="map_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
+        <remap from="robot_description" to="map_description" />
+    </node>
+-->
+ 
+</launch>

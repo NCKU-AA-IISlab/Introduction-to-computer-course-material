@@ -1,0 +1,48 @@
+<launch>
+  <param name="/use_sim_time" value="true" />
+  <arg name="veh2" doc="Name of vehicle. ex: megaman"/>
+  <arg name="veh" doc="Name of vehicle. ex: megaman"/>
+  <arg name="rviz" default="true"/>
+  <!-- start world --> 
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"> 
+     <arg name="world_name" value="$(find rc_car_gazebo)/world//lab5916_map_3bound_real.world"/>
+	<!--arg name="world_name" value="$(find rc_car_gazebo)/world/loop.world"/-->
+  </include>
+ <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rc_car_description)/duck.rviz"/>
+  <!-- BEGIN ROBOT 1-->
+  <group ns="$(arg veh)">
+    <param name="tf_prefix" value="$(arg veh)" />
+    <include file="$(find rc_car_description)/launch/duck.launch" >
+      <arg name="init_pose" value="-x 0 -y 0 -z 0" />
+      <arg name="robot_name"  value="$(arg veh)" />
+    </include>
+    <!--node name="rc_car_odomCH" pkg="rc_car_control" type="rc_car_odomCH" /--> 
+<!--if put "rc_car_odomCH" in rc_car.launch,there is randomly making this process died. Doesn't knowing why...-->
+  </group>
+
+  <!-- BEGIN ROBOT 2-->
+ <group ns="$(arg veh2)">
+    <param name="tf_prefix" value="$(arg veh2)" />
+    <include file="$(find rc_car_description)/launch/duck.launch" >
+      <arg name="init_pose" value="-x 2 -y 2 -z 0" />
+      <arg name="robot_name"  value="$(arg veh2)" />
+    </include>
+   <!--node name="rc_car_odomCH" pkg="rc_car_control" type="rc_car_odomCH" /--> 
+<!--if put "rc_car_odomCH" in rc_car.launch,there is randomly making this process died. Doesn't knowing why...-->
+  </group>
+<!--<gazebo>
+  <plugin name="differential_drive_controller" filename="libdiffdrive_plugin.so">
+      <arg name="left_wheel" value="left_wheel" />
+      <arg name="right_wheel"  value="right_wheel" />
+  </plugin>
+</gazebo>-->
+    <include file="$(find duckietown_description)/launch/duckietown2d3d_map.launch" >
+      <arg name="veh" value="$(arg veh)" />
+    </include>
+
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg veh)odom_broadcaster"
+    args="0 0 0 0 0 0 /world /$(arg veh)/odom1  100"/> 
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg veh2)odom_broadcaster"
+    args="0 0 0 0 0 0 /world /$(arg veh2)/odom1  100"/> 
+
+</launch>

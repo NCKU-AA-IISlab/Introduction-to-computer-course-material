@@ -2,7 +2,12 @@
 <robot name="macros" xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:property name="pi" value="3.14159265359" />
     <xacro:property name="tile_thickness" value="0.01" />
-
+	<physics type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+      <gravity>0 0 -9.8</gravity>
+    </physics>
     <!-- Defines a tile link and joint-->
     <xacro:macro name="tile" params="x y type:=empty rotation:=0 visible:=true">
         <link name="tile_${x}_${y}">
@@ -10,11 +15,45 @@
                 <visual>
                     <origin xyz="${tile_width/2} ${tile_width/2} ${-tile_thickness/2}" rpy="0 0 ${rotation * pi/180}"/>
                     <geometry>
-                        <mesh filename="package://duckietown_description/urdf/meshes/${type}.dae" />
+                        <mesh filename="package://duckietown_description/urdf/meshes/${type}.dae" scale="1.02 1.02 1.02"/>
+                        
                     </geometry>
                 </visual>
+		<inertial> 
+    			<origin xyz="${tile_width/2} ${tile_width/2} ${-tile_thickness/2}" rpy="0 0 0"/> 
+    			<mass value="100"/> 
+     			<inertia  ixx="0" ixy = "0" ixz = "0"
+    			iyy="0" iyz = "0"
+    			izz="0"/>
+  		</inertial>
+	    <collision> 
+    		<origin xyz="${tile_width/2} ${tile_width/2} ${-tile_thickness/2}" rpy="0 0 0"/> 
+    		<geometry> 
+      			 <box size="${tile_width} ${tile_width} ${tile_thickness}"/>
+    		</geometry> 
+		<surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+            <bounce/>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+          <max_contacts>10</max_contacts>
+  		</collision>
             </xacro:if>
+
         </link>
+
+	<gazebo>
+    <static>true</static>
+	</gazebo>
+
+
 
         <joint name="world_to_tile_${x}_${y}" type="fixed">
             <parent link="world" />
@@ -22,6 +61,9 @@
             <origin xyz="${tile_width * x} ${tile_width * y} 0" />
         </joint>
     </xacro:macro>
+
+<!-- *************************************************************-->
+
 
     <!-- Defines an april tag link and joint-->
     <xacro:macro name="tag" params="id x y pos rotation">
@@ -41,3 +83,4 @@
         </joint>
     </xacro:macro>
 </robot>
+

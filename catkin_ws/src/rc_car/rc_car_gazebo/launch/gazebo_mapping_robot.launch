@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<launch>
+
+  <param name="/use_sim_time" value="true" />
+
+<arg name="veh" doc="Name of vehicle. ex: megaman"/>
+  <!-- start up wg world -->
+  <!--<include file="$(find gazebo_ros)/launch/willowgarage_world.launch"/>-->
+ <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch"> 
+     <arg name="world_name" value="$(find rc_car_gazebo)/world/my.world"/>
+  </include>
+-->
+  <!--node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node-->
+  <!-- start robot state publisher -->
+  <!--<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
+    <param name="publish_frequency" type="double" value="50.0" />
+  </node>-->
+<!--
+  <arg name="model" />
+  <param name="robot_description" 
+	 command="$(find xacro)/xacro.py '$(find rc_car_description)/urdf/rc_car.xacro'" />
+
+  <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -z 0.1 -model rc_car_model" respawn="false" output="screen" />
+-->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rc_car_gazebo)/launch/mapping.rviz"/>
+  
+ <remap from="scan" to="$(arg veh)/laser" />
+  <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
+    <param name="base_frame" value="$(arg veh)/base_footprint"/>
+     <param name="odom_frame" value="$(arg veh)/odom"/>
+	<param name="map_frame" value="$(arg veh)/map"/>
+    
+  </node>
+
+<!--
+  <include file="$(find rc_car_control)/launch/rc_car_control.launch" />
+  <node name="rc_car_diffFB" pkg="rc_car_control" type="rc_car_diffFB" />
+--> 
+  <remap from="odom" to="$(arg veh)/odom" />
+  <node name="odometry_trans" pkg="rc_car_gazebo" type="odometry_trans"/><!--no odom publish-->
+  
+<!--<node pkg="tf" type="static_transform_publisher" name="camera2ar_tag" args="0 0 0 0 0.707 0 0.707 camera_link ar_tag_link 100" />-->
+
+</launch>
+

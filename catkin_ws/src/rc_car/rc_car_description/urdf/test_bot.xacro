@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<robot name="gzbbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+################################################################################
+	<xacro:property name="veh" value="gzbbot"/>
+	<xacro:property name="chassisHeight" value="0.0365"/>
+	<xacro:property name="chassisLength" value="0.17"/>
+	<xacro:property name="chassisWidth" value="0.075"/>
+	<xacro:property name="chassisMass" value="0.38"/>     <!--unit:kg-->
+	<xacro:property name="chassisXpos" value="0"/>
+	<xacro:property name="chassisYpos" value="0"/>
+	<xacro:property name="chassisZpos" value="0.054"/>
+	<xacro:property name="mass" value="5"/>
+
+	<xacro:property name="length_wheel" value="0.026"/>
+	<xacro:property name="radius_wheel" value="0.035"/>
+	<xacro:property name="wheelPos" value="0.06"/>  <!--distance between head-->
+
+	<xacro:property name="casterRadius" value="0.027"/>
+	<xacro:property name="casterMass" value="0.007"/>
+
+	<xacro:property name="cameraSize" value="0.023"/>
+	<xacro:property name="cameraMass" value="0.0003"/>
+
+        <xacro:include filename="$(find rc_car_description)/urdf/test_bot.gazebo" />
+        <xacro:include filename="$(find rc_car_description)/urdf/wheel.xacro" />
+################################################################################
+
+
+<link name='chassis'>
+    <collision> 
+        <origin xyz="${chassisXpos} ${chassisYpos} ${chassisZpos}" rpy="0 0 0"/> 
+        <geometry> 
+            <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+        </geometry> 
+    </collision>
+    <visual> 
+        <origin xyz="${chassisXpos} ${chassisYpos} ${chassisZpos}" rpy="0 0 0"/> 
+        <geometry> 
+            <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+        </geometry> 
+    </visual>
+    <inertial> 
+        <mass value="${mass}" />
+        <box_inertia m="${mass}" x="${chassisLength}" y="${chassisWidth}" z="${chassisHeight}"/>
+    </inertial>
+</link>
+
+<link name="base_footprint" />
+
+<joint name="base_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+</joint>
+
+<link name="base_link" />
+
+<joint name="base_link_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="chassis"/>
+</joint>
+
+
+<link name="caster_wheel_back">
+    <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <sphere radius="${casterRadius}"/>
+        </geometry>
+    </collision>
+    <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <sphere radius="${casterRadius}"/>
+        </geometry>
+    </visual>
+    <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${casterMass}"/>
+        <sphere_inertia m="${casterMass}" r="${casterRadius}"/>
+    </inertial>
+</link>
+
+ <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>   
+      <geometry>     
+        <!--mesh scale ="0.1 0.1 0.1" filename="package://rc_car_description/meshes/duckiebotcam.dae"/-->
+	<box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+      </geometry>
+    </visual>
+  <inertial> 
+    <origin xyz="0 0 0" rpy="0 0 0"/> 
+    <mass value="${cameraMass}"/> 
+    <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+  </inertial>
+  </link>
+
+######################################################################################
+
+<wheel n1234="1" fb = "1"  lr="1"  />
+<wheel n1234="2" fb = "1"  lr="-1" />
+<!--wheel n1234="3" fb = "-1" lr="1" /-->
+<!--wheel n1234="4" fb = "-1" lr="-1" /-->
+
+######################################################################################
+
+<joint name="camera_joint" type="fixed">
+    <origin xyz="0.08 0 0.12475" rpy="0 0.349 0"/>
+    <parent link="chassis"/>
+    <child link="camera_link"/>
+</joint>
+
+<joint name="chassis_to_caster" type="fixed">
+    <origin xyz="-0.05 0 ${casterRadius}" rpy="0 0 0" />
+    <parent link="chassis"/>
+    <child link="caster_wheel_back"/>
+</joint>
+
+
+######################################################################################
+
+ <transmission name="base_to_wheel1_joint_motor">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="base_to_wheel1">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="base_to_wheel1_joint_motor">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>10</mechanicalReduction>
+  </actuator>
+ </transmission>
+
+ <transmission name="base_to_wheel2_joint_motor">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="base_to_wheel2">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="base_to_wheel2_joint_motor">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>10</mechanicalReduction>
+  </actuator>
+ </transmission>
+
+########################################################################################
+</robot>
+
+
+
+
+
+

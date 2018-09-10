@@ -1,0 +1,27 @@
+<launch>
+    <arg name="veh" doc="Name of vehicle. ex: megaman"/>
+    <arg name="local" default="true" doc="true for running on laptop. false for running on vehicle."/>
+    <arg name="config" default="baseline" doc="Specify a config."/>
+    <arg name="param_file_name" default="default" doc="Specify a param file. ex:megaman." />
+
+
+    <include file="$(find duckietown)/machines"/>
+    <!-- KB joy -->
+<node if="$(arg local)" ns="$(arg veh)" pkg="ta_lab_sunny" type="teleop_twist_keyboard.py" name="teleop_twist_keyboard" output="screen" clear_params="true" required="true"/>
+   
+	 <!-- joy_mapper -->
+    <include file="$(find ta_lab_sunny)/launch/KB_mapper_node.launch">
+        <arg name="veh" value="$(arg veh)"/>
+        <arg name="local" value="$(arg local)"/>
+        <arg name="config" value="$(arg config)"/>
+        <arg name="param_file_name" value="$(arg param_file_name)"/>
+    </include>
+
+	<!-- talker -->
+<node if="$(arg local)" ns="$(arg veh)" pkg="ta_lab_sunny" type="pub2num.py" name="talker" output="screen" clear_params="true" required="true"/>
+              <!-- commander -->
+<remap from="mode" to="keyboard_mapper_node/mode"/>
+<remap from="commander/car_cmd" to="keyboard_mapper_node/car_cmd"/>
+<node if="$(arg local)" ns="$(arg veh)" pkg="ta_lab_sunny" type="commander.py" name="commander" output="screen" clear_params="true" required="true"/>
+
+</launch>

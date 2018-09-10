@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<launch>
+
+  <param name="/use_sim_time" value="true" />
+
+  <!-- start up wg world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"/> 
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <!-- start robot state publisher -->
+<!--  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
+    <param name="publish_frequency" type="double" value="50.0" />
+  </node>-->
+
+
+  <arg name="model" />
+  <param name="robot_description" 
+	 command="$(find xacro)/xacro.py '$(find rc_car_description)/urdf/rc_car.xacro'" />
+
+  <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -z 0.1 -model rc_car_model" respawn="false" output="screen" />
+
+	<!-- ros_control mybot launch file -->
+  <include file="$(find rc_car_control)/launch/rc_car_control.launch" />
+  <node name="diff" pkg="rc_car_control" type="diff" />
+
+<!--  <node name="odometry" pkg="rc_car_gazebo" type="odometry_trans"/>-->
+
+</launch>
+

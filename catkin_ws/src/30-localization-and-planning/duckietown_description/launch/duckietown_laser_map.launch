@@ -1,0 +1,22 @@
+<launch>
+
+    <!--arg name="veh" doc="Name of vehicle. ex: megaman"/-->
+    <arg name="map_name" default="lab5916_map" doc="The name of the xacro file with the duckietown map "/>
+    <arg name="map_file" default="$(find duckietown_description)/map/lab5916_0201_test7_new.yaml"/>
+    <arg name="rviz_config" default="rviz_odroid"/>
+    <arg name="gui" default="true" />
+
+    <node if="$(arg gui)" name="rviz" pkg="rviz" type="rviz" args="-d $(find duckietown_description)/rviz/$(arg rviz_config).rviz" output="screen"/>
+
+
+    <!-- The duckietown map state publisher-->
+    <param name="map_description" command="$(find xacro)/xacro '$(find duckietown_description)/urdf/$(arg map_name).urdf.xacro'" />
+    
+    <node name="map_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
+    <remap from="robot_description" to="map_description" />
+    </node>
+
+    <node pkg="tf" type="static_transform_publisher" name="map_world" args="3.90 5.95 0 3.14 0 0 /world /map 100"/>
+    <!--node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" /-->
+
+</launch>

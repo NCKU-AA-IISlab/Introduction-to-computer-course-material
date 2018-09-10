@@ -1,0 +1,22 @@
+<launch>
+    <!--arg name="veh" doc="Name of vehicle. ex: megaman"/-->
+    <arg name="robot_name"   value="tingbot"/>
+    <arg name="init_pose"  value="-x 0 -y 0 -z 0"/>
+    <arg name="model" />
+<!-- start world --> 
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"> 
+  <!--arg name="world_name" value="$(find rc_car_gazebo)/world/lab5916_map.world"/-->
+</include>
+<param name="$(arg robot_name)_description" 
+	 command="$(find xacro)/xacro.py '$(find rc_car_description)/urdf/demos/rc_car_v2.xacro'" />
+
+
+  <node name="spawn_rc_car" pkg="gazebo_ros" type="spawn_model" 
+	args="$(arg init_pose) -urdf -param $(arg robot_name)_description -model $(arg robot_name)" 
+	respawn="false" output="screen" />
+
+<!--publish TF-->
+<node name="$(arg robot_name)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+     	<remap from="robot_description" to="$(arg robot_name)_description" />
+	</node>
+</launch>

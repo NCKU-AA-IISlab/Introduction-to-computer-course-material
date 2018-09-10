@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"   name="little_car">
+<!--.........describe property.........-->   
+<xacro:property name="length_wheel" value="0.05" />
+<xacro:property name="radius_wheel" value="0.05" />
+
+<!--.........describe include.........-->   
+<xacro:include filename="$(find rc_car_description)/urdf/demos/littlecar.gazebo" />
+
+<!--.........describe macro.........-->
+<xacro:macro name="default_inertial" params="mass">
+  <inertial>
+      <mass value="${mass}" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+  </inertial>
+</xacro:macro>
+
+<!--.........describe link.........-->
+    <link name="base_footprint">                  <!--Base  link-->
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="0.001 0.001 0.001"/>
+            </geometry>        
+        </visual>
+    <xacro:default_inertial mass="0.0001"/>
+    </link>
+
+    <link name="body">
+        <visual>
+            <geometry>
+                <box size="0.2 0.3 0.1"/>
+<mesh  filename="package://ta_lab_sunny/meshes/miata.dae" scale ="0.1 0.1 0.1"/>
+            </geometry>
+            <origin rpy="0 0 1.54" xyz="0 0 0.05"/>
+	
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.2 0.3 0.1"/>
+            </geometry>
+            <origin rpy="0 0 1.54" xyz="0 0 0.05"/>
+        </collision>
+        <xacro:default_inertial mass="10"/>
+    </link>
+
+    <link name="wheel_1">
+        <visual>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </collision>
+        <xacro:default_inertial mass="1"/>
+    </link>
+
+    <link name="wheel_2">
+        <visual>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </collision>
+        <xacro:default_inertial mass="1"/>
+    </link>
+
+    <link name="wheel_3">
+        <visual>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </collision>
+        <xacro:default_inertial mass="1"/>
+    </link>
+
+    <link name="wheel_4">
+        <visual>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </collision>
+        <xacro:default_inertial mass="1"/>
+    </link>
+<!--.........describe joint.........-->
+ <joint name="base_footprint_joint" type="fixed">
+     <origin xyz="0 0 0" />
+     <parent link="base_footprint" />
+     <child link="body" />
+ </joint>
+
+ <joint name="base_to_wheel1" type="continuous">
+     <parent link="body"/>
+     <child link="wheel_1"/>
+     <origin rpy="1.5707 0 0" xyz="0.1 0.15 0"/>
+     <axis xyz="0 0 1" />
+ </joint>
+
+ <joint name="base_to_wheel2" type="continuous">
+     <axis xyz="0 0 1" />
+     <parent link="body"/>
+     <child link="wheel_2"/>
+     <origin rpy="1.5707 0 0" xyz="-0.1 0.15 0"/>
+</joint>
+
+ <joint name="base_to_wheel3" type="continuous">
+     <parent link="body"/>
+     <axis xyz="0 0 1" />
+     <child link="wheel_3"/>
+     <origin rpy="1.5707 0 0" xyz="0.1 -0.15 0"/>
+ </joint>
+
+ <joint name="base_to_wheel4" type="continuous">
+     <parent link="body"/>
+     <axis xyz="0 0 1" />
+     <child link="wheel_4"/>
+     <origin rpy="1.5707 0 0" xyz="-0.1 -0.15 0"/>
+ </joint>
+
+</robot>
+

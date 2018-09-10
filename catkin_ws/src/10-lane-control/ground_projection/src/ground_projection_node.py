@@ -77,6 +77,7 @@ class GroundProjectionNode(object):
         rospy.loginfo("Got raw image")
         try:
             cv_image = self.bridge.imgmsg_to_cv2(img_msg,desired_encoding="bgr8")
+	    
         except CvBridgeError as e:
             rospy.logerr(e)
         self.gp.estimate_homography(cv_image)

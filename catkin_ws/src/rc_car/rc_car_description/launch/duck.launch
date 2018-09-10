@@ -1,0 +1,22 @@
+<launch>
+    <arg name="robot_name"/>
+    <arg name="init_pose"/>
+    <arg name="model" />
+  <param name="$(arg robot_name)_description" 
+	 command="$(find xacro)/xacro.py '$(find rc_car_description)/urdf/rc_car_$(arg robot_name).xacro'" />--- also need to change in rc_car_control.launch
+  <!--param name="$(arg robot_name)_description" 
+	 command="$(find xacro)/xacro.py '$(find rc_car_description)/urdf/demos/rc_car_v2.xacro'" /-->
+
+  <node name="spawn_rc_car" pkg="gazebo_ros" type="spawn_model" 
+	args="$(arg init_pose) -urdf -param $(arg robot_name)_description -model $(arg robot_name)" 
+	respawn="false" output="screen" />
+
+<!--<node name="$(arg robot_name)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+     	<remap from="robot_description" to="$(arg robot_name)_description" />
+	</node>-->
+
+<include file="$(find rc_car_control)/launch/rc_car_control.launch" >
+<arg name="robot_name"  value="$(arg robot_name)" />
+    </include>   
+<!--node name="rc_car_diffFB" pkg="rc_car_control" type="rc_car_diffFB" /-->
+</launch>

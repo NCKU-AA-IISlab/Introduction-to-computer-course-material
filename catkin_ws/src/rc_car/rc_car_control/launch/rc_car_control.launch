@@ -1,0 +1,28 @@
+<launch>
+<arg name="robot_name"/>
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find rc_car_control)/config/$(arg robot_name)_control.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node  name="controller_spawner_$(arg robot_name)"
+    pkg="controller_manager"
+    type="spawner" respawn="false"
+    output="screen" 
+    args="joint_state_controller rightWheel_effort_controller leftWheel_effort_controller" />
+
+ <param name="$(arg robot_name)_description" 
+	 command="$(find xacro)/xacro.py '$(find rc_car_description)/urdf/rc_car_$(arg robot_name).xacro'" />
+  <!--param name="$(arg robot_name)_description" 
+	 command="$(find xacro)/xacro.py '$(find rc_car_description)/urdf/demos/rc_car_v2.xacro'" /-->
+  
+<!-- convert joint states to TF transforms for rviz, etc -->
+<node name="$(arg robot_name)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+     	<remap from="robot_description" to="$(arg robot_name)_description" />
+	  
+
+</node>
+  
+
+
+
+</launch>

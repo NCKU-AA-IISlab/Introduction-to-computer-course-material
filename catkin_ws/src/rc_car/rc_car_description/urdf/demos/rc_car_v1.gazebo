@@ -1,0 +1,37 @@
+<robot>
+<gazebo reference="chassis">
+
+</gazebo>
+
+<gazebo reference="caster_wheel_back">
+  <mu1>0.15</mu1>
+  <mu2>0.15</mu2>
+  <material>Gazebo/Red</material>
+</gazebo>
+
+<gazebo>
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+    <robotNamespace>${veh}</robotNamespace>
+	<robotParam>${veh}_description</robotParam>
+  </plugin>
+</gazebo>
+
+<gazebo>
+  <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+    <alwaysOn>true</alwaysOn>
+    <updateRate>100</updateRate>
+    <leftJoint>left_wheel_hinge</leftJoint>
+    <rightJoint>right_wheel_hinge</rightJoint>
+    <wheelSeparation>${chassisWidth+wheelWidth}</wheelSeparation> 
+   <wheelDiameter>${2*wheelRadius}</wheelDiameter>
+    <torque>20</torque>
+    <commandTopic>cmd_vel</commandTopic>
+    <odometryTopic>odom</odometryTopic>
+    <odometryFrame>odom</odometryFrame>
+    <robotBaseFrame>base_footprint</robotBaseFrame>
+  </plugin>
+</gazebo>
+
+
+
+</robot>

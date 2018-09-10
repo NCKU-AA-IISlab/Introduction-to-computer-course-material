@@ -107,11 +107,14 @@ class GroundProjection():
         logger.info("image rectified")
 
         ret, corners = cv2.findChessboardCorners(cv_image_rectified, (self.board_['width'], self.board_['height']))
+        print(corners)
         if ret == False:
             logger.error("No corners found in image")
+	    print("No corners found in image")
             exit(1)
         if len(corners) != self.board_['width'] * self.board_['height']:
             logger.error("Not all corners found in image")
+ 	    print("Not all corners found in image")
             exit(2)
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.01)
         corners2 = cv2.cornerSubPix(cv_image_rectified, corners, (11,11), (-1,-1), criteria)

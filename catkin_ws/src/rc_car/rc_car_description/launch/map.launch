@@ -1,0 +1,42 @@
+<launch>
+  <param name="/use_sim_time" value="true" />
+    <arg name="paused" default="true"/>
+    <arg name="veh" doc="Name of vehicle. ex: megaman"/>
+    <arg name="map_name" default="lab5916_map_3bound" doc="The name of the xacro file with the duckietown map "/>
+    <arg name="gui" default="false" /> <!--rviz-->
+    <arg name="rviz_config" default="rviz_default"/>
+    <arg name="init_pose" value="-x 1.5 -y 1.6 -z 0" />
+    <arg name="gazebo" value="true" />
+     <group ns="$(arg veh)">
+        <node if="$(arg gui)" name="rviz" pkg="rviz" type="rviz" args="-d $(find duckietown_description)/rviz/$(arg rviz_config).rviz" />
+    </group>
+
+  <!-- start world --> 
+  <include if="$(arg gazebo)" file="$(find gazebo_ros)/launch/empty_world.launch"> 
+     <!--arg name="world_name" value="$(find duckietown_description)/urdf/duckietown.world"/-->
+  </include>
+
+
+
+
+
+    <!-- The duckietown map state publisher-->
+	 <param name="map_description" command="$(find xacro)/xacro.py '$(find duckietown_description)/urdf/$(arg map_name).urdf.xacro'" /> 
+
+ 	<node name="map_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
+        	<remap from="robot_description" to="map_description" />
+   	</node>
+ 	<node if="$(arg gazebo)" name="spawn_town" pkg="gazebo_ros" type="spawn_model" 
+	args="-param map_description -urdf -model town"  respawn="false" output="screen"/>
+
+  <!-- BEGIN ROBOT 1-->
+<!--  <group ns="$(arg veh)">
+    <param name="tf_prefix" value="$(arg veh)" />
+    <include file="$(find rc_car_description)/launch/duck.launch" >
+      <arg name="init_pose" value="-x 0 -y 0 -z 0" />
+      <arg name="robot_name"  value="$(arg veh)" />
+    </include>-->
+    <!--node name="rc_car_odomCH" pkg="rc_car_control" type="rc_car_odomCH" /--> 
+<!--if put "rc_car_odomCH" in rc_car.launch,there is randomly making this process died. Doesn't knowing why...-->
+  <!--</group>-->
+</launch>

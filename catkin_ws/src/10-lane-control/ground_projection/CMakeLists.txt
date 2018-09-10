@@ -68,3 +68,36 @@ catkin_package(
   CATKIN_DEPENDS image_transport roscpp rospy duckietown_msgs sensor_msgs std_msgs geometry_msgs message_runtime cv_bridge image_geometry
 #  DEPENDS system_lib
 )
+
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+)
+
+## Declare a C++ library
+# add_library(ground_projection
+#   src/${PROJECT_NAME}/ground_projection.cpp
+# )
+
+## Add cmake target dependencies of the library
+## as an example, code may need to be generated before libraries
+## either from message generation or dynamic reconfigure
+# add_dependencies(ground_projection ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Declare a C++ executable
+add_executable(ground_projection 
+  src/ground_projection.cpp
+)
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+add_dependencies(ground_projection ${ground_projection_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(ground_projection
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS}
+  ${YAML_CPP_LIBRARIES}
+)
+
+##########

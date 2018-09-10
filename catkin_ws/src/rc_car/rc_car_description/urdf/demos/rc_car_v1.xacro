@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<robot name="tingbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:property name="PI" value="3.1415926535897931"/>
+	<xacro:property name="veh" value="tingbot"/>
+	<xacro:property name="chassisHeight" value="0.0365"/>
+	<xacro:property name="chassisLength" value="0.17"/>
+	<xacro:property name="chassisWidth" value="0.075"/>
+	<xacro:property name="chassisMass" value="0.28"/><!--unit:kg-->
+
+	<xacro:property name="casterRadius" value="0.017"/>
+	<xacro:property name="casterMass" value="0.028"/>
+<!--too light so slip-->
+	<xacro:property name="wheelWidth" value="0.026"/>
+	<xacro:property name="wheelRadius" value="0.035"/>
+	<xacro:property name="wheelPos" value="0.06"/>  <!--distance between head-->
+	<xacro:property name="wheelMass" value="0.035"/>
+
+	<xacro:property name="cameraSize" value="0.023"/>
+	<xacro:property name="cameraMass" value="0.03"/>
+	<xacro:include filename="$(find rc_car_description)/urdf/demos/rc_car_v1.gazebo" />
+	<xacro:include filename="$(find rc_car_description)/urdf/demos/materials.xacro" />
+	<xacro:include filename="$(find rc_car_description)/urdf/demos/macros_v1.xacro" />
+
+<link name='chassis'>
+  <collision> 
+    <origin xyz="0 0 0.054" rpy="0 0 0"/> 
+    <geometry> 
+   
+     <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+ 
+    </geometry> 
+  </collision>
+  <visual> 
+    <origin xyz="0 0 0.03" rpy="0 0 3.14"/> 
+    <geometry>
+  
+<mesh filename="package://rc_car_description/meshes/duckiebot.dae"/>
+    <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+    </geometry> 
+  </visual>
+  <inertial> 
+    <origin xyz="0 0 0.054" rpy="0 0 0"/> 
+    <mass value="${chassisMass}"/> 
+    <box_inertia m="${chassisMass}" x="${chassisLength}" y="${chassisWidth}" z="${chassisHeight}"/>
+  </inertial>
+</link>
+
+<link name="base_footprint" />
+
+<joint name="base_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+</joint>
+
+<link name="base_link" />
+
+<joint name="base_link_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="chassis"/>
+</joint>
+
+
+
+
+<joint name="caster_wheel_back" type="fixed">
+  <parent link="chassis"/>
+  <child link="caster_wheel_back"/>
+<origin xyz="${wheelPos/2-chassisLength/2} 0 ${casterRadius}" rpy="0 0 0" />
+</joint>
+
+<link name="caster_wheel_back">
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <sphere radius="${casterRadius}"/>
+    </geometry>
+  <surface>
+            <friction>
+              <ode>
+                <mu>100</mu><!-- Gazebo will choose the smallest '''mu''' and '''mu2''' from the two colliding objects.-->
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+            <bounce/>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+  </collision>
+  
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <sphere radius="${casterRadius}"/>
+    </geometry>
+    <material name="red"/>
+  </visual>
+
+  <inertial>
+    <origin xyz="-0.05 0 ${casterRadius}" rpy="0 0 0"/>
+    <mass value="${casterMass}"/>
+    <sphere_inertia m="${casterMass}" r="${casterRadius}"/>
+  </inertial>
+</link>
+
+<wheel lr="left" tY="-1"/>
+<wheel lr="right" tY="1"/>
+
+
+</robot>

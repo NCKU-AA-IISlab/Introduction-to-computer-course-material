@@ -47,6 +47,8 @@ pip install --upgrade --user \
 
 
 
-
+sudo apt-get install ros-kinetic-map-server
+sudo apt-get install ros-kinetic-fake-localization
+sudo apt-get install ros-kinetic-move-base-msgs
 # None of this should be needed. Next time you think you need it, let me know and we figure it out. -AC
 # sudo pip install --upgrade pip setuptools wheel
