@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Main software repository for Duckietown
 
 This is the main software repository for [the Duckietown project][main]. It contains all software, as well as hardware projects.
@@ -53,3 +54,9 @@ Master is now a protected branch. [See docs here](https://github.com/blog/2051-p
     </tr>
 </tbody>
 </table>
+=======
+# Introduction-to-computer-course-material
+  Course for freshmen, 2018 IBDPE, NCKU, Taiwan ROC.  
+
+llll
+>>>>>>> ce83b959cac3371927059aed4d711d32cefb4e16
