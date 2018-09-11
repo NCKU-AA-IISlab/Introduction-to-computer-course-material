@@ -138,6 +138,7 @@ class GroundProjection():
         extrinsics_filename = get_duckiefleet_root() + "/calibrations/camera_extrinsic/" + self.robot_name + ".yaml"
         self.write_homography(extrinsics_filename)
         logger.info("Wrote ground projection to {}".format(extrinsics_filename))
+	print("Wrote ground projection to {}".format(extrinsics_filename))
 
         # Check if specific point in matrix is larger than zero (this would definitly mean we're having a corrupted rotation matrix)
         if(self.H[1][2] > 0):
