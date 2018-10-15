@@ -6,6 +6,7 @@ import rospy
 import numpy as np
 import cv2
 from sensor_msgs.msg import CompressedImage, Image
+from ino_car.msg import LaneLine, LaneLines
 
 class LineDetectorNode(object):
     def __init__(self):
@@ -19,13 +20,14 @@ class LineDetectorNode(object):
 
         # Publishers
         self.pub_image = rospy.Publisher("~image_with_lines", Image, queue_size=1)
+        self.pub_lines = rospy.Publisher("~segment_list",  LaneLines, queue_size=1)       
         # Subscribers
         self.sub_image = rospy.Subscriber("~image", CompressedImage, self.cbImage, queue_size=1)
         #------------------------------------------
         self.bottom_width = 0.8  # width of bottom edge of trapezoid, expressed as percentage of image width
         self.top_width = 0.6  # ditto for top edge of trapezoid
         self.height = 0.4  # height of the trapezoid expressed as percentage of image height
-        self.height_from_bottom = 0 # height from bottom as percentage of image height
+        self.height_from_bottom = 0.05 # height from bottom as percentage of image height
         self.center =[0,0]
         self.hasleft= False
         self.hasright = False
@@ -337,14 +339,23 @@ class LineDetectorNode(object):
         edge_color = cv2.bitwise_and(hsv, masked_image)
         # Computing lane lines
         final_left_line, final_right_line, lane_lines = self.highway_lane_lines(edge_color,img_shape )
+        # SegmentList constructor
+        segmentList = LaneLines()
+        segmentList.header.stamp = image_msg.header.stamp
+
         image_with_lines = np.copy(image_cv)
         if final_left_line is not None:
             cv2.line(image_with_lines, (final_left_line[0], final_left_line[1]), (final_left_line[2], final_left_line[3]), (255, 0, 0), 5)
+            segmentList.lanelines.extend(self.toSegmentMsg(final_left_line,LaneLine.LEFT))
             self.hasleft = True
 
         if final_right_line is not None:
             cv2.line(image_with_lines, (final_right_line[0], final_right_line[1]), (final_right_line[2], final_right_line[3]), (0, 0, 255), 5)
             self.hasright = True
+            segmentList.lanelines.extend(self.toSegmentMsg(final_right_line,LaneLine.RIGHT))
+
+        # Publish segmentList
+        self.pub_lines.publish(segmentList)
 
         if self.hasleft and self.hasright:
             self.center[0] = (final_left_line[0]+final_right_line[0]+final_left_line[2] +final_right_line[2])/4
@@ -370,6 +381,20 @@ class LineDetectorNode(object):
         image_msg_out.header.stamp = image_msg.header.stamp
         self.pub_image.publish(image_msg_out)
     
+    def toSegmentMsg(self,  line,  side):
+        
+        segmentMsgList = []
+        
+        segment = LaneLine()
+        segment.side = side
+        segment.pixels_line[0].x = line[0]
+        segment.pixels_line[0].y = line[1]
+        segment.pixels_line[1].x = line[2]
+        segment.pixels_line[1].y = line[3]
+
+        segmentMsgList.append(segment)
+        return segmentMsgList
+
     def onShutdown(self):
         self.loginfo("Shutdown.")
 

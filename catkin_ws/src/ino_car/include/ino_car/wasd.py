@@ -116,6 +116,7 @@ if __name__=="__main__":
     settings = termios.tcgetattr(sys.stdin)
     dagu = wasd_Drive()
     do = True
+
     try:
         print msg
 	while do:

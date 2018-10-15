@@ -15,7 +15,7 @@
                 <visual>
                     <origin xyz="${tile_width/2} ${tile_width/2} ${-tile_thickness/2}" rpy="0 0 ${rotation * pi/180}"/>
                     <geometry>
-                        <mesh filename="package://duckietown_description/urdf/meshes/${type}.dae" scale="1.02 1.02 1.02"/>
+                        <mesh filename="package://duckietown_description/urdf/meshes/${type}.dae" scale="1.0084 1.0084 1.0084"/>
                         
                     </geometry>
                 </visual>

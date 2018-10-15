@@ -11,8 +11,8 @@ Panels:
         - /RobotModel2
         - /TF1
         - /TF1/Frames1
-      Splitter Ratio: 0.797721
-    Tree Height: 773
+      Splitter Ratio: 0.797721028
+    Tree Height: 565
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -21,7 +21,7 @@ Panels:
       - /2D Nav Goal1
       - /Publish Point1
     Name: Tool Properties
-    Splitter Ratio: 0.588679
+    Splitter Ratio: 0.588679016
   - Class: rviz/Views
     Expanded:
       - /Current View1
@@ -31,7 +31,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: Image
 Visualization Manager:
   Class: ""
   Displays:
@@ -41,7 +41,7 @@ Visualization Manager:
       Color: 160; 160; 164
       Enabled: true
       Line Style:
-        Line Width: 0.03
+        Line Width: 0.0299999993
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -102,15 +102,39 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
-    - Angle Tolerance: 0.1
+    - Angle Tolerance: 0.100000001
       Class: rviz/Odometry
-      Color: 255; 25; 0
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.300000012
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
       Enabled: false
       Keep: 100
-      Length: 1
       Name: Odometry
-      Position Tolerance: 0.1
+      Position Tolerance: 0.100000001
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.100000001
+        Color: 255; 25; 0
+        Head Length: 0.300000012
+        Head Radius: 0.100000001
+        Shaft Length: 1
+        Shaft Radius: 0.0500000007
+        Value: Arrow
       Topic: /tingbot/odom
+      Unreliable: false
       Value: false
     - Alpha: 1
       Class: rviz/RobotModel
@@ -122,39 +146,6 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        caster_wheel_back:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        chassis:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: tingbot/tingbot_description
       TF Prefix: tingbot
@@ -870,16 +861,14 @@ Visualization Manager:
           Value: false
         gzbbot/chassis:
           Value: false
-        gzbbot/duckiebot:
-          Value: false
-        gzbbot/gzbbot_camera_link:
-          Value: false
         gzbbot/left_wheel:
           Value: false
         gzbbot/odom1:
           Value: false
         gzbbot/right_wheel:
           Value: false
+        map:
+          Value: true
         tag_1:
           Value: false
         tag_109:
@@ -1156,64 +1145,6 @@ Visualization Manager:
           Value: false
         tile_6_9:
           Value: false
-        tingbot/base_footprint:
-          Value: false
-        tingbot/base_link:
-          Value: true
-        tingbot/camera_link:
-          Value: false
-        tingbot/caster_wheel_back:
-          Value: false
-        tingbot/chassis:
-          Value: false
-        tingbot/duckiebot:
-          Value: false
-        tingbot/left_wheel:
-          Value: false
-        tingbot/odom1:
-          Value: false
-        tingbot/right_wheel:
-          Value: false
-        tingbot/tingbot_camera_link:
-          Value: false
-        viewed_tag_12:
-          Value: true
-        viewed_tag_123:
-          Value: true
-        viewed_tag_18:
-          Value: true
-        viewed_tag_19:
-          Value: true
-        viewed_tag_22:
-          Value: true
-        viewed_tag_24:
-          Value: true
-        viewed_tag_25:
-          Value: true
-        viewed_tag_31:
-          Value: true
-        viewed_tag_35:
-          Value: true
-        viewed_tag_36:
-          Value: true
-        viewed_tag_39:
-          Value: true
-        viewed_tag_4:
-          Value: true
-        viewed_tag_41:
-          Value: true
-        viewed_tag_58:
-          Value: true
-        viewed_tag_60:
-          Value: true
-        viewed_tag_61:
-          Value: true
-        viewed_tag_65:
-          Value: true
-        viewed_tag_67:
-          Value: true
-        viewed_tag_68:
-          Value: true
         world:
           Value: true
       Marker Scale: 1
@@ -1222,264 +1153,270 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          gzbbot/duckiebot:
-            {}
-          gzbbot/odom1:
-            gzbbot/base_footprint:
-              gzbbot/base_link:
-                gzbbot/chassis:
-                  gzbbot/camera_link:
-                    {}
-                  gzbbot/caster_wheel_back:
-                    {}
-                  gzbbot/left_wheel:
-                    {}
-                  gzbbot/right_wheel:
-                    {}
-          tile_0_0:
-            tag_5:
-              {}
-          tile_0_1:
-            {}
-          tile_0_2:
-            tag_33:
-              {}
-            tag_62:
-              {}
-          tile_0_3:
-            tag_31:
-              {}
-            tag_68:
-              {}
-          tile_0_4:
-            tag_39:
-              {}
-            tag_63:
-              {}
-          tile_0_5:
-            tag_41:
-              {}
-            tag_67:
-              {}
-          tile_0_6:
-            tag_23:
-              {}
-          tile_0_7:
-            {}
-          tile_0_8:
-            tag_120:
-              {}
-          tile_0_9:
-            tag_8:
-              {}
-          tile_1_0:
-            tag_14:
-              {}
-          tile_1_1:
-            {}
-          tile_1_2:
-            tag_28:
-              {}
-          tile_1_3:
-            tag_58:
-              {}
-          tile_1_4:
-            tag_119:
-              {}
-          tile_1_5:
-            tag_60:
-              {}
-          tile_1_6:
-            tag_122:
-              {}
-          tile_1_7:
-            tag_115:
-              {}
-          tile_1_8:
-            tag_7:
-              {}
-          tile_1_9:
-            tag_15:
-              {}
-          tile_2_0:
-            {}
-          tile_2_1:
-            tag_18:
-              {}
-          tile_2_2:
-            tag_113:
-              {}
-          tile_2_3:
-            {}
-          tile_2_4:
-            tag_51:
-              {}
-            tag_72:
-              {}
-          tile_2_5:
-            tag_53:
-              {}
-            tag_71:
-              {}
-          tile_2_6:
-            tag_21:
-              {}
-          tile_2_7:
-            tag_13:
-              {}
-          tile_2_8:
-            {}
-          tile_2_9:
-            {}
-          tile_3_0:
-            tag_30:
-              {}
-            tag_65:
-              {}
-          tile_3_1:
-            tag_9:
-              {}
-          tile_3_2:
-            tag_24:
-              {}
-            tag_4:
-              {}
-          tile_3_3:
-            tag_112:
-              {}
-            tag_6:
-              {}
-          tile_3_4:
-            tag_52:
-              {}
-            tag_70:
-              {}
-          tile_3_5:
-            tag_49:
-              {}
-            tag_78:
-              {}
-          tile_3_6:
-            tag_124:
-              {}
-          tile_3_7:
-            tag_17:
-              {}
-          tile_3_8:
-            tag_38:
-              {}
-          tile_3_9:
-            tag_1:
-              {}
-            tag_64:
-              {}
-          tile_4_0:
-            tag_36:
-              {}
-            tag_61:
-              {}
-          tile_4_1:
-            tag_35:
-              {}
-          tile_4_2:
-            {}
-          tile_4_3:
-            tag_26:
-              {}
-          tile_4_4:
-            tag_121:
-              {}
-          tile_4_5:
-            {}
-          tile_4_6:
-            tag_111:
-              {}
-            tag_20:
-              {}
-          tile_4_7:
-            tag_118:
-              {}
-            tag_16:
-              {}
-          tile_4_8:
-            tag_57:
-              {}
-          tile_4_9:
-            tag_32:
-              {}
-            tag_66:
-              {}
-          tile_5_0:
-            {}
-          tile_5_1:
-            {}
-          tile_5_2:
-            {}
-          tile_5_3:
-            tag_12:
-              {}
-          tile_5_4:
-            tag_114:
-              {}
-          tile_5_5:
-            tag_117:
-              {}
-          tile_5_6:
-            {}
-          tile_5_7:
-            tag_110:
-              {}
-          tile_5_8:
-            {}
-          tile_5_9:
-            tag_11:
-              {}
-          tile_6_0:
-            tag_123:
-              {}
-          tile_6_1:
-            tag_19:
-              {}
-          tile_6_2:
-            tag_25:
-              {}
-          tile_6_3:
-            tag_22:
-              {}
-          tile_6_4:
-            {}
-          tile_6_5:
-            {}
-          tile_6_6:
-            tag_109:
-              {}
-          tile_6_7:
-            {}
-          tile_6_8:
-            {}
-          tile_6_9:
-            tag_116:
-              {}
-          tingbot/duckiebot:
-            {}
-          tingbot/odom1:
-            tingbot/base_footprint:
-              tingbot/base_link:
-                tingbot/chassis:
-                  tingbot/camera_link:
-                    {}
-                  tingbot/caster_wheel_back:
-                    {}
-                  tingbot/left_wheel:
-                    {}
-                  tingbot/right_wheel:
-                    {}
+        map:
+          world:
+            gzbbot/odom1:
+              gzbbot/base_footprint:
+                gzbbot/base_link:
+                  gzbbot/chassis:
+                    gzbbot/camera_link:
+                      {}
+                    gzbbot/caster_wheel_back:
+                      {}
+                    gzbbot/left_wheel:
+                      {}
+                    gzbbot/right_wheel:
+                      {}
+            tile_0_0:
+              tag_5:
+                {}
+            tile_0_1:
+              {}
+            tile_0_2:
+              tag_33:
+                {}
+              tag_62:
+                {}
+            tile_0_3:
+              tag_31:
+                {}
+              tag_68:
+                {}
+            tile_0_4:
+              tag_39:
+                {}
+              tag_63:
+                {}
+            tile_0_5:
+              tag_41:
+                {}
+              tag_67:
+                {}
+            tile_0_6:
+              tag_23:
+                {}
+            tile_0_7:
+              {}
+            tile_0_8:
+              tag_120:
+                {}
+            tile_0_9:
+              tag_8:
+                {}
+            tile_1_0:
+              tag_14:
+                {}
+            tile_1_1:
+              {}
+            tile_1_2:
+              tag_28:
+                {}
+            tile_1_3:
+              tag_58:
+                {}
+            tile_1_4:
+              tag_119:
+                {}
+            tile_1_5:
+              tag_60:
+                {}
+            tile_1_6:
+              tag_122:
+                {}
+            tile_1_7:
+              tag_115:
+                {}
+            tile_1_8:
+              tag_7:
+                {}
+            tile_1_9:
+              tag_15:
+                {}
+            tile_2_0:
+              {}
+            tile_2_1:
+              tag_18:
+                {}
+            tile_2_2:
+              tag_113:
+                {}
+            tile_2_3:
+              {}
+            tile_2_4:
+              tag_51:
+                {}
+              tag_72:
+                {}
+            tile_2_5:
+              tag_53:
+                {}
+              tag_71:
+                {}
+            tile_2_6:
+              tag_21:
+                {}
+            tile_2_7:
+              tag_13:
+                {}
+            tile_2_8:
+              {}
+            tile_2_9:
+              {}
+            tile_3_0:
+              tag_30:
+                {}
+              tag_65:
+                {}
+            tile_3_1:
+              tag_9:
+                {}
+            tile_3_2:
+              tag_24:
+                {}
+              tag_4:
+                {}
+            tile_3_3:
+              tag_112:
+                {}
+              tag_6:
+                {}
+            tile_3_4:
+              tag_52:
+                {}
+              tag_70:
+                {}
+            tile_3_5:
+              tag_49:
+                {}
+              tag_78:
+                {}
+            tile_3_6:
+              tag_124:
+                {}
+            tile_3_7:
+              tag_17:
+                {}
+            tile_3_8:
+              tag_38:
+                {}
+            tile_3_9:
+              tag_1:
+                {}
+              tag_64:
+                {}
+            tile_4_0:
+              tag_36:
+                {}
+              tag_61:
+                {}
+            tile_4_1:
+              tag_35:
+                {}
+            tile_4_2:
+              {}
+            tile_4_3:
+              tag_26:
+                {}
+            tile_4_4:
+              tag_121:
+                {}
+            tile_4_5:
+              {}
+            tile_4_6:
+              tag_111:
+                {}
+              tag_20:
+                {}
+            tile_4_7:
+              tag_118:
+                {}
+              tag_16:
+                {}
+            tile_4_8:
+              tag_57:
+                {}
+            tile_4_9:
+              tag_32:
+                {}
+              tag_66:
+                {}
+            tile_5_0:
+              {}
+            tile_5_1:
+              {}
+            tile_5_2:
+              {}
+            tile_5_3:
+              tag_12:
+                {}
+            tile_5_4:
+              tag_114:
+                {}
+            tile_5_5:
+              tag_117:
+                {}
+            tile_5_6:
+              {}
+            tile_5_7:
+              tag_110:
+                {}
+            tile_5_8:
+              {}
+            tile_5_9:
+              tag_11:
+                {}
+            tile_6_0:
+              tag_123:
+                {}
+            tile_6_1:
+              tag_19:
+                {}
+            tile_6_2:
+              tag_25:
+                {}
+            tile_6_3:
+              tag_22:
+                {}
+            tile_6_4:
+              {}
+            tile_6_5:
+              {}
+            tile_6_6:
+              tag_109:
+                {}
+            tile_6_7:
+              {}
+            tile_6_8:
+              {}
+            tile_6_9:
+              tag_116:
+                {}
       Update Interval: 0
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /gzbbot/visualization_marker
+      Name: Marker
+      Namespaces:
+        Sphere: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /gzbbot/line_detector_node/image_with_lines
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
+    Default Light: true
     Fixed Frame: world
     Frame Rate: 30
   Name: root
@@ -1501,22 +1438,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 9.486
+      Distance: 10.2926254
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.06
+        Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.55137
-        Y: 2.60148
-        Z: -0.49728
+        X: 0.841248989
+        Y: 1.07590771
+        Z: -0.496545792
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.0500000007
+      Invert Z Axis: false
       Name: Current View
-      Near Clip Distance: 0.01
-      Pitch: 1.2052
+      Near Clip Distance: 0.00999999978
+      Pitch: 1.56979632
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 6.1936
+      Yaw: 0.0354143679
     Saved: ~
 Window Geometry:
   Displays:
@@ -1524,7 +1464,9 @@ Window Geometry:
   Height: 1056
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000017100000394fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000002800000394000000dd00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f000002c2fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000028000002c2000000b000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073f00000040fc0100000002fb0000000800540069006d006501000000000000073f000002f600fffffffb0000000800540069006d00650100000000000004500000000000000000000005c80000039400000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Image:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd00000004000000000000017100000394fc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000028000002c4000000d700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d00610067006501000002f2000000ca0000001600ffffff000000010000010f000002c2fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000028000002c2000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073f00000040fc0100000002fb0000000800540069006d006501000000000000073f0000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000005c80000039400000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:

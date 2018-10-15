@@ -17,6 +17,9 @@ echo "Set ROS_HOSTNAME to: $ROS_HOSTNAME"
 export DUCKIETOWN_ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo "Set DUCKIETOWN_ROOT to: $DUCKIETOWN_ROOT"
 
+export DUCKIEFLEET_ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+echo "Set DUCKIEFLEET_ROOT to: $DUCKIEFLEET_ROOT"
+
 export PYTHONPATH=$DUCKIETOWN_ROOT/catkin_ws/src:$PYTHONPATH
 echo "Set PYTHONPATH to: $PYTHONPATH"
 
@@ -33,3 +36,5 @@ then
 fi
 
 exec "$@" #Passes arguments. Need this for ROS remote launching to work.
+
+

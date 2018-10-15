@@ -1,0 +1,27 @@
+<launch>
+	<arg name="veh" default="$(env VEHICLE_NAME)"/>
+	<arg name="param_file_name" default="default" />
+	<arg name="line_detector_param_file_name" default="$(arg param_file_name)"/>
+	<!-- start basic args -->
+	<include file="$(find ino_car)/launch/master_gazebo.launch">
+		<arg name="veh" value="$(arg veh)"/>
+		<arg name="visualization" default="true" />
+		<arg name="verbose" default="true" />
+		<arg name="param_file_name" default="default" />
+		<arg name="line_detector_param_file_name" default="$(arg line_detector_param_file_name)" />		<arg name="/camera/local" value="true"/>  
+        <arg name="/camera/raw" value="true"/>
+        <arg name="/camera/raw/rect" value="true"/>  
+
+        <arg name="/lane_following/line_detection" value="true"/>
+        <arg name="/lane_following/ground_projection" value="true"/>
+        <arg name="/lane_following/lane_filter" value="true"/>
+   
+	<arg name="odometry" value="true"/>  ++++ for navigation(forward_kinematics2gazebo_node) 
+
+	<arg name="/odometry/forward_kinematics" value="true"/> ++++ same reason above
+        <arg name="wheels" value="true" />   -- false for cmd2gazebo (lane_following)
+	<arg name="anti_instagram" default="true" />
+	<arg name="/lane_following/stop_line_filter" default="false" /> <!-- will not every allow a transition into COORDINATION mode -->
+<arg name="LED" value="false"/>
+	</include>
+</launch>
