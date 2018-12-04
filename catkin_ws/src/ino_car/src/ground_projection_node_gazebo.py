@@ -12,7 +12,6 @@ from geometry_msgs.msg import Point,Vector3
 from ino_car.msg import LaneLine, LaneLines
 import rviz_tools_py as rviz_tools
 import math
-
 class GroundProjectionNode(object):
 
     def __init__(self):
@@ -41,6 +40,7 @@ class GroundProjectionNode(object):
         self.gp.robot_name = self.robot_name
         self.gp.rectified_input_ = rospy.get_param("rectified_input", False)
         self.image_channel_name = "image_raw"
+
         # Subs and Pubs
         self.pub_lineseglist_ = rospy.Publisher("~goal_point",Point, queue_size=1)
         self.sub_lineseglist_ = rospy.Subscriber("~lineseglist_in",LaneLines, self.lineseglist_cb)
@@ -109,7 +109,7 @@ class GroundProjectionNode(object):
         self.pub_lineseglist_.publish(goal_out)
         self.hasleft = False
         self.hasright = False
-
+    
     def normal_vector(self,p1,p2):
         d = math.sqrt((p1.x-p2.x)**2+(p1.y-p2.y)**2)
         n_v = [-(p1.y-p2.y)/d, (p1.x-p2.x)/d]
@@ -125,7 +125,7 @@ class GroundProjectionNode(object):
     def estimate_homography_cb(self,req):
         rospy.loginfo("Estimating homography")
         rospy.loginfo("Waiting for raw image")
-        img_msg = rospy.wait_for_message("/"+self.robot_name+"/camera_node/image/raw",Image)
+        img_msg = rospy.wait_for_message("/"+self.robot_name+"/camera_node/image",Image)
         rospy.loginfo("Got raw image")
         try:
             cv_image = self.bridge.imgmsg_to_cv2(img_msg,desired_encoding="bgr8")

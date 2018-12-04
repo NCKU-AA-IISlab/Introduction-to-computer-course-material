@@ -1,8 +1,8 @@
 #lane_control/lane_controller_node
 #v_bar_old 0.45
-v_bar: 0.3
+v_bar: 0.2
 # k_d_old: -12
-k_lat: -25.30    #lateral
+k_lat: 8.30    #lateral
 # k_theta_old: -6.0
 k_lon: -5.15    #longitutinal
 theta_thres: 0.523

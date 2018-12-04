@@ -1,0 +1,23 @@
+<launch>
+    <arg name="veh" doc="Name of vehicle. ex: megaman"/>
+    <arg name="local" default="false" doc="true for running everything you possibly can on laptop. false for everything running on vehicle."/>
+    <arg name="pkg_name" value="ino_car"/>
+    <arg name="node_name" default="sunny_new_line_detect_simple"/>
+       <group ns="$(arg veh)">        
+        <!-- run local -->
+        <node if="$(arg local)" name="line_detector_node" pkg="$(arg pkg_name)" type="$(arg node_name).py" output="screen" clear_params="true" required="true">
+
+        </node>
+
+        <!-- run remote -->
+        <include unless="$(arg local)" file="$(find duckietown)/machines"/>
+        <node unless="$(arg local)" machine="$(arg veh)" name="line_detector_node" pkg="$(arg pkg_name)" type="$(arg node_name).py" output="screen" clear_params="true" required="true">
+
+        </node>
+    </group>
+
+    <!-- Publications -->
+
+    <!-- Subscriptions -->
+
+</launch>

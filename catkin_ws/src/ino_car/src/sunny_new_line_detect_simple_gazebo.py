@@ -5,6 +5,7 @@ import threading
 import rospy
 import numpy as np
 import cv2
+import math
 from sensor_msgs.msg import CompressedImage, Image
 from ino_car.msg import LaneLine, LaneLines
 
@@ -25,10 +26,10 @@ class LineDetectorNode(object):
         self.sub_image = rospy.Subscriber("~image", CompressedImage, self.cbImage, queue_size=1)
         #------------------------------------------
         self.bottom_width = 0.85  # width of bottom edge of trapezoid, expressed as percentage of image width
-        self.top_width = 0.3  # ditto for top edge of trapezoid
+        self.top_width = 0.75  # ditto for top edge of trapezoid
         self.height = 0.4  # height of the trapezoid expressed as percentage of image height
         self.height_from_bottom = 0.05 # height from bottom as percentage of image height
-        self.x_translation = -0.02  # Can be +ve or -ve. Translation of midpoint of region of interest along x axis
+        self.x_translation = -0.01  # Can be +ve or -ve. Translation of midpoint of region of interest along x axis
 
         self.center =[0,0]
         self.hasleft= False
@@ -46,16 +47,84 @@ class LineDetectorNode(object):
         self.hsv_red4=    np.array([180,255,255])
         self.dilation_kernel_size = 3
         #----------------------------------------
-    def _colorFilter(self,hsv):
-        # threshold colors in HSV space
+
+    def _colorFilter(self,hsv,color):
+    # threshold colors in HSV space
+        bw_red = cv2.inRange(hsv, self.hsv_red1, self.hsv_red2)
         bw_white = cv2.inRange(hsv, self.hsv_white1, self.hsv_white2)
         bw_yellow = cv2.inRange(hsv, self.hsv_yellow1, self.hsv_yellow2)
-        bw = cv2.bitwise_or(bw_white, bw_yellow)
+        if color == 'white':
+            bw = bw_white
+        elif color == 'yellow':
+            bw = bw_yellow 
+        elif color == 'red':
+            bw = bw_red
         # binary dilation
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(self.dilation_kernel_size, self.dilation_kernel_size))
         bw = cv2.dilate(bw, kernel)
-            
-        return bw
+        if self.verbose:
+            color_segments = self.color_segment(bw_white,bw_red,bw_yellow)
+        else:
+            color_segments = []
+        return bw, color_segments
+          
+
+    def detectLines(self,img,color,img_shape):
+        
+
+        lines = self.hough_transform(img)
+        # Removing horizontal lines detected from hough transform
+        lane_lines = self.filter_horizontal_short_lines(lines)
+        # Separating lines on left and right side of the highway lane
+        lane_lines_=[]
+
+        if color == 'yellow':
+            if lane_lines is None:
+                return None,None
+            for l in lane_lines:
+                lane_lines_ += [(l[0][0], l[0][1], l[0][2], l[0][3])]
+            lane_line = self.draw_single_line(lane_lines_ ,img_shape)
+            return lane_line,lane_lines
+        if color == 'white':
+            if lane_lines is None:
+                print 'no white'
+                return None,None,None
+            for l in lane_lines:
+                lane_lines_ += [(l[0][0], l[0][1], l[0][2], l[0][3])]
+            left_lines,right_lines  = self.separate_white_lines(lane_lines_)
+            right_lane_line = self.draw_single_line( right_lines,img_shape ) 
+            left_lane_line = self.draw_single_line( left_lines,img_shape )  
+
+        return left_lane_line ,right_lane_line ,lane_lines
+
+    def filter_horizontal_short_lines(self,lines):
+        """
+         1.Removes all lines with slope between -10 and +10 degrees
+         This is done because for highway lane lines the lines will be closer to being
+         vertical from the view of the front mounted camera
+         2.Removes too sho = []rt
+        """
+
+        if lines is None:
+            return
+        #for l in lines:
+        #    dist = math.sqrt( (l[0][2] - l[0][0])**2 + (l[0][3] - l[0][1])**2 )
+        #    print dist
+        non_short_lines = [l for l in lines if
+                            not math.sqrt( (l[0][2] - l[0][0])**2 + (l[0][3] - l[0][1])**2 ) < 20] 
+        non_vertical_lines = [l for l in  non_short_lines if
+                            not float(l[0][2] - l[0][0]) == 0]
+        vertical_lines = [l for l in lines if
+                             float(l[0][2] - l[0][0]) == 0]   
+        non_horizontal_lines = [l for l in non_vertical_lines if
+                            not -10 <= np.rad2deg(np.arctan(float(l[0][3] - l[0][1]) /float(l[0][2] - l[0][0])) ) <= 10]
+
+
+        if len(vertical_lines) != 0 :
+            for v in vertical_lines:
+                non_horizontal_lines.append(v)
+        non_horizontal_lines = np.array(non_horizontal_lines) 
+        return non_horizontal_lines
 
     def cbImage(self, image_msg):
 
@@ -68,6 +137,41 @@ class LineDetectorNode(object):
     
     def loginfo(self, s):
         rospy.loginfo('[%s] %s' % (self.node_name, s))
+
+    # generate color segments
+    def color_segment(area_white, area_red, area_yellow):
+        B, G, R = 0, 1, 2
+
+        def white(x):
+            x = cv2.cvtColor(x, cv2.COLOR_GRAY2BGR)
+            return x
+        def red(x):
+            x = cv2.cvtColor(x, cv2.COLOR_GRAY2BGR)
+            x[:,:,R] *= 1
+            x[:,:,G] *= 0
+            x[:,:,B] *= 0
+            return x
+        def yellow(x):
+            x = cv2.cvtColor(x, cv2.COLOR_GRAY2BGR)
+            x[:,:,R] *= 1
+            x[:,:,G] *= 1
+            x[:,:,B] *= 0
+            return x
+
+        h, w = area_white.shape
+        orig = [area_white, area_red, area_yellow]
+        masks = [white(area_white), red(area_red), yellow(area_yellow)]
+
+        res = np.zeros((h,w,3), dtype=np.uint8)
+
+        for i, m in enumerate(masks):
+            nz = (orig[i] > 0) * 1.0
+            assert nz.shape == (h, w), nz.shape
+
+            for j in [0, 1, 2]:
+                res[:,:,j] = (1-nz) * res[:,:,j].copy() + (nz) * m[:,:,j]
+
+        return res
 
     def canny_edge_median(self,img):
         """canny_edge_median takes an image and does auto-thresholding
@@ -157,6 +261,25 @@ class LineDetectorNode(object):
         return non_horizontal_lines
 
 
+    def separate_white_lines(self,lines):
+        """
+        Separates the left and right white lines of the highway lane
+        :param lines: an array containing the lines which make left and right side of highway lane
+        """
+        if lines is None:
+            return
+        x_m=0
+
+        for x1, y1, x2, y2 in lines:
+            x_m += x1
+            x_m += x2
+        x_m = x_m/2
+
+
+        right_lines = [l for l in lines if l[0] >= x_m]
+        left_lines = [l for l in lines if l[0] < x_m]
+
+        return  left_lines,right_lines
 
 
     def separate_lines(self,lines):
@@ -312,8 +435,8 @@ class LineDetectorNode(object):
         
         # color
         hsv = cv2.cvtColor(image_cv, cv2.COLOR_BGR2HSV)
-        hsv =self. _colorFilter(hsv)
-        
+        white, color_segments  = self._colorFilter(hsv,'white')  #hsv: white/black image color_segments: color space with color
+        yellow, color_segments  = self._colorFilter(hsv,'yellow')
         # Computing edges
         img_edges = self.canny_edge_median(blur)
         
@@ -321,29 +444,52 @@ class LineDetectorNode(object):
         img_shape = gray.shape
         my_vertices = self.compute_mask_vertices(img_shape)
         masked_image, mask = self.region_of_interest(img_edges, my_vertices)
-        edge_color = cv2.bitwise_and(hsv, masked_image)
+        #bitwise edge, color, mask
+        edge_yellow = cv2.bitwise_and(yellow, masked_image)
+        edge_white = cv2.bitwise_and(white, masked_image)
         # Computing lane lines
-        final_left_line, final_right_line, lane_lines = self.highway_lane_lines(edge_color,img_shape )
+        right_white_line,left_white_line, white_lines =  self.detectLines(edge_white,'white',img_shape) #the order of   right and left have to exchange because the different coordinate of image frame and the normal frame
+        yellow_line, yellow_lines =  self.detectLines(edge_yellow,'yellow',img_shape)
+        # handle two white line at same side
+        
+        if left_white_line and right_white_line:
+            if ((left_white_line[0]-left_white_line[2])/2 - (yellow_line[0]- yellow_line[2])/2) > 0:
+                right_white_line = map(lambda x: x/2, list(np.array(right_white_line)+np.array(left_white_line)))
+                left_white_line = None
+
+        if yellow_line and right_white_line:
+            if (yellow_line[0]+yellow_line[2]) - (right_white_line[0] +right_white_line[2]) > self.lanewidth:
+                right_white_line = None
+        if yellow_line and right_white_line:
+            if (yellow_line[0]+yellow_line[2]) > (right_white_line[0] +right_white_line[2]):
+                yellow_line = None
         # SegmentList constructor
         segmentList = LaneLines()
         segmentList.header.stamp = image_msg.header.stamp
 
         image_with_lines = np.copy(image_cv)
-        if final_left_line is not None:
-            cv2.line(image_with_lines, (final_left_line[0], final_left_line[1]), (final_left_line[2], final_left_line[3]), (0,255, 0), 5)
-            segmentList.lanelines.extend(self.toSegmentMsg(final_left_line,LaneLine.LEFT))
-            self.hasleft = True
+        # draw line on image_With_line
+        if yellow_line  is not None:
+            cv2.line(image_with_lines, (yellow_line[0], yellow_line[1]), (yellow_line[2], yellow_line[3]), (0, 255, 0), 5)
+	    self.hasleft = True
+            segmentList.lanelines.extend(self.toSegmentMsg(yellow_line,LaneLine.LEFT))
 
-        if final_right_line is not None:
-            cv2.line(image_with_lines, (final_right_line[0], final_right_line[1]), (final_right_line[2], final_right_line[3]), (0, 0, 255), 5)
-            self.hasright = True
-            segmentList.lanelines.extend(self.toSegmentMsg(final_right_line,LaneLine.RIGHT))
+        if right_white_line is not None:
+            cv2.line(image_with_lines, (right_white_line[0], right_white_line[1]), (right_white_line[2], right_white_line[3]), (0, 0, 255), 5)
+	    self.hasright = True
+            segmentList.lanelines.extend(self.toSegmentMsg(right_white_line,LaneLine.RIGHT))
 
         # Publish segmentList
         self.pub_lines.publish(segmentList)
-        if lane_lines is not None:
-            for i,pl in enumerate(lane_lines):
+
+        # plot on image_With_line
+        if white_lines is not None:
+            for i,pl in enumerate(white_lines):
                 cv2.line(image_with_lines, (pl[0][0], pl[0][1]), (pl[0][2], pl[0][3]), (255, 0, 0),2)
+        if yellow_lines is not None:
+            for i,pl in enumerate(yellow_lines):
+                cv2.line(image_with_lines, (pl[0][0], pl[0][1]), (pl[0][2], pl[0][3]), (255, 0, 0),2)
+        '''
         if self.hasleft and self.hasright:
             self.center[0] = (final_left_line[0]+final_right_line[0]+final_left_line[2] +final_right_line[2])/4
             self.center[1] = (final_left_line[1]+final_right_line[1]+final_left_line[3] +final_right_line[3])/4
@@ -362,6 +508,7 @@ class LineDetectorNode(object):
             cv2.circle(image_with_lines, (self.center[0] ,self.center[1]), 3, (0,255,255), thickness=3, lineType=8, shift=0) 
             self.hasleft = False
             self.hasright = False
+        '''
         cv2.polylines(image_with_lines,my_vertices,True,(0,255,255))
         # Publish the frame with lines
         image_msg_out = self.bridge.cv2_to_imgmsg(image_with_lines, "bgr8")

@@ -19,7 +19,7 @@ class GroundProjection():
         # defaults overwritten by param
         self.robot_name = robot_name
         self.rectified_input = False
-
+        
         # Load homography
         self.H = self.load_homography()
         self.Hinv = np.linalg.inv(self.H)
@@ -39,8 +39,8 @@ class GroundProjection():
         pixel = Pixel()
         cw = self.ci_.width
         ch = self.ci_.height
-        pixel.u = cw * vec.x
-        pixel.v = ch * vec.y
+        pixel.u = 1 * vec.x
+        pixel.v = 1 * vec.y
         if (pixel.u < 0): pixel.u = 0
         if (pixel.u > cw -1): pixel.u = cw - 1
         if (pixel.v < 0): pixel.v = 0
@@ -91,7 +91,7 @@ class GroundProjection():
         else:
             pixel.u = image_point[0]
             pixel.v = image_point[1]
-
+        return pixel
     def rectify(self, cv_image_raw):
         '''Undistort image'''
         cv_image_rectified = np.zeros(np.shape(cv_image_raw))
@@ -146,7 +146,9 @@ class GroundProjection():
 
     def load_homography(self):
         '''Load homography (extrinsic parameters)'''
-        filename = ("~/duckietown/catkin_ws/ino_car" + self.robot_name + ".yaml")
+        
+        filename = ("/home/room5909/duckietown/catkin_ws/src/ino_car/config/baseline/calibrations/camera_extrinsic/" + self.robot_name + ".yaml")
+        print 'load '+filename        
         if not os.path.isfile(filename):
             logger.warn("no extrinsic calibration parameters for {}, trying default".format(self.robot_name))
             filename = (get_duckiefleet_root() + "/calibrations/camera_extrinsic/default.yaml")
@@ -158,6 +160,7 @@ class GroundProjection():
             rospy.loginfo("Using extrinsic calibration of " + self.robot_name)
             data = yaml_load_file(filename)
         logger.info("Loaded homography for {}".format(os.path.basename(filename)))
+        print 'load '+filename
         return np.array(data['homography']).reshape((3,3))
 
     def write_homography(self, filename):

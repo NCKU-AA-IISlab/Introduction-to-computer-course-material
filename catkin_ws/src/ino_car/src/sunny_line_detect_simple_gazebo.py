@@ -344,6 +344,7 @@ class LineDetectorNode(object):
         if lane_lines is not None:
             for i,pl in enumerate(lane_lines):
                 cv2.line(image_with_lines, (pl[0][0], pl[0][1]), (pl[0][2], pl[0][3]), (255, 0, 0),2)
+        
         if self.hasleft and self.hasright:
             self.center[0] = (final_left_line[0]+final_right_line[0]+final_left_line[2] +final_right_line[2])/4
             self.center[1] = (final_left_line[1]+final_right_line[1]+final_left_line[3] +final_right_line[3])/4
@@ -362,6 +363,7 @@ class LineDetectorNode(object):
             cv2.circle(image_with_lines, (self.center[0] ,self.center[1]), 3, (0,255,255), thickness=3, lineType=8, shift=0) 
             self.hasleft = False
             self.hasright = False
+        
         cv2.polylines(image_with_lines,my_vertices,True,(0,255,255))
         # Publish the frame with lines
         image_msg_out = self.bridge.cv2_to_imgmsg(image_with_lines, "bgr8")

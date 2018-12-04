@@ -11,7 +11,7 @@
         <arg name="line_detector_param_file_name" default='default' />
         <arg name="drive" default="true"/>
 	<!-- Camera -->
-	<include if="$(arg camera)" file="$(find pi_camera)/launch/camera_node.launch">
+	<include if="$(arg camera)" file="$(find duckietown)/launch/camera.launch">
 		<arg name="veh" value="$(arg veh)"/>
 		<arg name="local" value="$(arg local)"/>
 		<arg name="config" value="$(arg config)"/>
@@ -24,14 +24,14 @@
 
 	<!-- Line Detector -->
 	<remap from="line_detector_node/image" to="camera_node/image/compressed"/>
-	<include file="$(find ino_car)/launch/pi/sunny_line_detector_node.launch">
+	<include file="$(find ino_car)/launch/ino_line_detector_node.launch">
 	    <arg name="veh" value="$(arg veh)"/>
 	    <arg name="local" value="$(arg local)"/>
 
 	</include>
 
         <!-- ground projection-->	
-	<include file="$(find ino_car)/launch/ground_projection_node.launch">
+	<include file="$(find ino_car)/launch/ino_ground_projection_node.launch">
 		<arg name="veh" value="$(arg veh)"/>
 		 <arg name="local" value="$(arg local)"/>
 		 <arg name="config" value="$(arg config)"/>
@@ -41,26 +41,18 @@
 
 	<!-- Lane controller -->
         <remap from="lane_controller_node/lane_pose" to="ground_projection/goal_point"/>
-        <include file="$(find ino_car)/launch/lane_controller_node.launch">
+        <include file="$(find ino_car)/launch/ino_lane_controller_node.launch">
         	<arg name="veh" value="$(arg veh)"/>
         	<arg name="local" value="$(arg local)"/>
         	<arg name="config" value="$(arg config)"/>
         	<arg name="param_file_name" value="$(arg param_file_name)"/>        
     </include>
 
-
-    <!-- car_cmd_switch_node --> ---1
-    <remap from="inverse_kinematics_node/car_cmd" to="lane_controller_node/car_cmd"/>
-    <include file="$(find dagu_car)/launch/inverse_kinematics_node.launch">
-        <arg name="veh" value="$(arg veh)"/>
-        <arg name="local" value="$(arg local)"/>
-        <arg name="config" value="$(arg config)"/>
+        <remap from="base_ino_control/car_cmd" to="lane_controller_node/car_cmd"/>
+        <include file="$(find ino_car)/launch/ino_kb.launch">
+        	<arg name="veh" value="$(arg veh)"/>
+        	<arg name="local" value="$(arg local)"/>
+        	<arg name="config" value="$(arg config)"/>
+        	<arg name="param_file_name" value="$(arg param_file_name)"/>        
     </include>
-    <group if="$(arg drive)">
-        <!-- Wheel Driver -->
-	<remap from="wheels_driver_node/wheels_cmd" to="inverse_kinematics_node/wheels_cmd"/>
-    	<include if="$(arg live)" file="$(find dagu_car)/launch/wheels_driver_node.launch">
-            <arg name="veh" value="$(arg veh)"/>
-        </include>
-    </group>
 </launch>
