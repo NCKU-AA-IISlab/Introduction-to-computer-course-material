@@ -36,5 +36,6 @@ then
 fi
 
 exec "$@" #Passes arguments. Need this for ROS remote launching to work.
-
+echo "ROSLAUNCH_SSH_UNKNOWN=1..."
+export ROSLAUNCH_SSH_UNKNOWN=1
 

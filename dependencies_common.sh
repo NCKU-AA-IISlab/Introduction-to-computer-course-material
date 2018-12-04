@@ -7,8 +7,8 @@ if [[ `id -u` -eq 0 ]] ; then
 fi
 
 set -x
-
-
+# FOr 14.04
+# sudo pip install frozendict
 sudo apt install -y \
 	python-frozendict \
 	libxslt-dev \
