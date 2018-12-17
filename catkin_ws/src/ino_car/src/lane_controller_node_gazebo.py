@@ -2,7 +2,7 @@
 import rospy
 import numpy as np
 import math
-from duckietown_msgs.msg import  Twist2DStamped, LanePose
+from duckietown_msgs.msg import  Twist2DStamped, LanePose, BoolStamped
 from geometry_msgs.msg import Point,Vector3
 
 class lane_controller(object):
@@ -11,6 +11,8 @@ class lane_controller(object):
         self.lane_reading = None
 
         self.pub_counter = 0
+        self.stop_flag = False
+        self.already_Stop = False
 
         # Setup parameters
         self.setGains()
@@ -20,7 +22,7 @@ class lane_controller(object):
 
         # Subscriptions
         self.sub_lane_reading = rospy.Subscriber("~lane_pose", Point, self.cbPose, queue_size=1)
-
+        self.sub_stop_flag = rospy.Subscriber("~stop_flag", BoolStamped, self.cbStopFlag, queue_size=1)
         # safe shutdown
         rospy.on_shutdown(self.custom_shutdown)
 
@@ -103,12 +105,26 @@ class lane_controller(object):
         #self.pub_wheels_cmd.publish(wheels_cmd_msg)
 
     def cbPose(self,lane_pose_msg):
+        car_control_msg = Twist2DStamped()
+        if self.stop_flag == True:
+
+               if self.alreay_stop == False:            
+                   car_control_msg.v = 0
+                   car_control_msg.omega = 0
+                   self.publishCmd(car_control_msg)
+                   rospy.sleep(2)
+                   self.alreay_stop = True 
+                   return
+        else:
+            self.alreay_stop = False
+
+            
         self.lane_reading = lane_pose_msg 
 
         lat_track_err = lane_pose_msg.y - self.d_offset
         lon_track_err = lane_pose_msg.x 
 
-        car_control_msg = Twist2DStamped()
+        
         
         car_control_msg.v = self.v_bar #*self.speed_gain #Left stick V-axis. Up is positive
         
@@ -128,6 +144,9 @@ class lane_controller(object):
         #     self.pub_counter = 1
         #     print "lane_controller publish"
         #     print car_control_msg
+
+    def cbStopFlag(self,flag_msg):
+        self.stop_flag = flag_msg.data
 
 if __name__ == "__main__":
     rospy.init_node("lane_controller",anonymous=False)

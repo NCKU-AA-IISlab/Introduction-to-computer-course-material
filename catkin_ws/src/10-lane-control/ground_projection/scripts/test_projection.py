@@ -67,7 +67,7 @@ if __name__ == "__main__":
   key = 0
   
   image_topic_name = get_image_topic_name(veh)
-  print "image topic name: " + image_topic_name
+  print "image topic name: " + str(image_topic_name)
 
   if image_topic_name is not None:
     while(key is not 27):

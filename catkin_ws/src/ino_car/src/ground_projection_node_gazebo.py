@@ -4,6 +4,7 @@ import rospy
 import cv2
 from ground_projection.srv import EstimateHomography, EstimateHomographyResponse, GetGroundCoord, GetGroundCoordResponse, GetImageCoord, GetImageCoordResponse
 from duckietown_msgs.msg import (Pixel, Vector2D, Segment, SegmentList)
+from duckietown_msgs.msg import BoolStamped
 from sensor_msgs.msg import (Image, CameraInfo)
 from cv_bridge import CvBridge
 import numpy as np
@@ -18,8 +19,6 @@ class GroundProjectionNode(object):
         self.node_name="Ground Projection"
         self.active = True
         self.bridge=CvBridge()
-        self.hasleft = False
-        self.hasright = False
         self.lookahead_dis = 0.3
         self.robot_name = rospy.get_param("~config_file_name","robot_not_specified")
         self.markers = rviz_tools.RvizMarkers(self.robot_name + '/base_footprint', 'visualization_marker')
@@ -35,6 +34,7 @@ class GroundProjectionNode(object):
         # Params
         self.hasleft = False
         self.hasright = False
+        self.stopFlag = BoolStamped()
         self.goalpoint = [0,0]
         self.lane_width = 0.1
         self.gp.robot_name = self.robot_name
@@ -43,6 +43,7 @@ class GroundProjectionNode(object):
 
         # Subs and Pubs
         self.pub_lineseglist_ = rospy.Publisher("~goal_point",Point, queue_size=1)
+        self.pub_stop_flag = rospy.Publisher("~stop_flag", BoolStamped, queue_size=1)
         self.sub_lineseglist_ = rospy.Subscriber("~lineseglist_in",LaneLines, self.lineseglist_cb)
 
         # TODO prepare services
@@ -79,6 +80,18 @@ class GroundProjectionNode(object):
             new_seglist.lanelines.append(new_segment)
             self.markers.publishLine(new_segment.points[1], new_segment.points[0], 'purple', 0.01, 0.1) # point1, point2, color, width, lifetime
             self.markers.publishSphere(new_segment.points[1],  'orange', Vector3(0.01,0.01,0.01), 1.0)
+        
+
+
+            if received_segment.side == 2: #STOP
+                 dis = self.gp.vector2ground(received_segment.pixels_line[0])
+                 if dis.x <0.5:
+                     self.stopFlag.data = True
+                     print "STOPSTOP" + str(dis.x) 
+                     
+               
+
+        
         #calculate goal point
         if self.hasleft and self.hasright: 
             goal_out.x = (new_seglist.lanelines[1].points[0].x + new_seglist.lanelines[1].points[1].x+new_seglist.lanelines[0].points[0].x + new_seglist.lanelines[0].points[1].x)/4
@@ -98,7 +111,7 @@ class GroundProjectionNode(object):
             goal_out.y = goal_out.y - new_seglist.lanelines[0].normal_vec[1]* self.lane_width
             goal_out.x = goal_out.x - new_seglist.lanelines[0].normal_vec[0]* self.lane_width
 
-          
+                   
         # Publish a sphere using a ROS Point
         point = goal_out
         self.path.append(point)
@@ -107,6 +120,8 @@ class GroundProjectionNode(object):
         
 
         self.pub_lineseglist_.publish(goal_out)
+        self.pub_stop_flag.publish(self.stopFlag)
+        self.stopFlag.data = False
         self.hasleft = False
         self.hasright = False
     
